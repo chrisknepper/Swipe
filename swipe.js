@@ -30,7 +30,8 @@ function Swipe(container, options) {
   var element = container.children[0];
   var slides, slidePos, width, length, captions;
   options = options || {};
-  var index = parseInt(options.startSlide, 10) || 0;
+  var initial = parseInt(options.startSlide, 10);
+  var index =  initial || 0;
   var speed = options.speed || 300;
   options.continuous = options.continuous !== undefined ? options.continuous : true;
   var captionContainer = options.captionContainer || false;
@@ -106,6 +107,13 @@ function Swipe(container, options) {
     if (options.continuous) slide(index+1);
     else if (index < slides.length - 1) slide(index+1);
 
+  }
+
+  function reset() {
+    if(initial)
+      slide(initial);
+    else
+      slide(0);
   }
 
   function circle(index) {
@@ -474,6 +482,10 @@ function Swipe(container, options) {
       element.addEventListener('transitionend', events, false);
     }
 
+    //Go back to "startSlide" or the first slide when the captionElement is clicked or touched
+    if(captionElement)
+      captionElement.addEventListener('click', reset, false);
+
     // set resize event on window
     window.addEventListener('resize', events, false);
 
@@ -556,6 +568,10 @@ function Swipe(container, options) {
         element.removeEventListener('oTransitionEnd', events, false);
         element.removeEventListener('otransitionend', events, false);
         element.removeEventListener('transitionend', events, false);
+        captionElement.removeEventListener('click', reset, false);
+        if(captionElement)
+
+
         window.removeEventListener('resize', events, false);
 
       }
